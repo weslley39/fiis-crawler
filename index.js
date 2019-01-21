@@ -54,7 +54,7 @@ server.route({
         const html = await requestPromise(`${FUNDS_EXPLORER_URL}/funds/${name}`)
         const $ = cheerio.load(html);
 
-        const carousel = $('#main-indicators-carousel .carousel-cell').eq(5).text();
+        const carousel = $('#main-indicators-carousel .carousel-cell').eq(2).text();
         value = carousel.match(/[0-9].*/g)[0];
       } catch (error) {
         value = `${name} NOT FOUND`
