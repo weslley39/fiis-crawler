@@ -5,6 +5,7 @@ const cheerio = require('cheerio');
 const requestPromise = require('request-promise');
 
 const FIIS_URL = 'https://fiis.com.br';
+const FUNDS_EXPLORER_URL = 'https://www.fundsexplorer.com.br';
 const PREFIX = '/api'
 
 const server = Hapi.server({
@@ -40,6 +41,27 @@ server.route({
 
         return { value };
     }
+});
+
+server.route({
+  method:'GET',
+  path: `${PREFIX}/last-income`,
+  handler: async (request, reply) => {
+
+      const { name } = request.query;
+      let value;
+      try {
+        const html = await requestPromise(`${FUNDS_EXPLORER_URL}/funds/${name}`)
+        const $ = cheerio.load(html);
+
+        const carousel = $('#main-indicators-carousel .carousel-cell').eq(5).text();
+        value = carousel.match(/[0-9].*/g)[0];
+      } catch (error) {
+        value = `${name} NOT FOUND`
+      }
+
+      return { value };
+  }
 });
 
 // Start the server
